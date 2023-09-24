@@ -2,20 +2,19 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/common/rounded_small_button.dart';
 import 'package:twitter_clone/constants/constants.dart';
-import 'package:twitter_clone/features/auth/view/signup_view.dart';
+import 'package:twitter_clone/features/auth/view/login_view.dart';
 import 'package:twitter_clone/features/auth/widgets/auth_field.dart';
 import 'package:twitter_clone/theme/theme.dart';
 
-class LoginView extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const LoginView());
-
-  const LoginView({super.key});
+class SignUpView extends StatefulWidget {
+  static route() => MaterialPageRoute(builder: (context) => const SignUpView());
+  const SignUpView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<SignUpView> createState() => _SignUpViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _SignUpViewState extends State<SignUpView> {
   final appBar = UIConstants.appBar();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -57,17 +56,17 @@ class _LoginViewState extends State<LoginView> {
                 const SizedBox(height: 40),
                 RichText(
                   text: TextSpan(
-                    text: "Don't have an  account",
+                    text: "You already have an account?",
                     children: [
                       TextSpan(
-                        text: " Sign up",
+                        text: " Log in",
                         style: const TextStyle(
                           color: Pallete.blueColor,
                           fontSize: 16,
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            Navigator.push(context, SignUpView.route());
+                            Navigator.push(context, LoginView.route());
                           },
                       ),
                     ],
