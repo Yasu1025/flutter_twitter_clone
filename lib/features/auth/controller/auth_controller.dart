@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone/apis/auth_api.dart';
+import 'package:twitter_clone/apis/user_api.dart';
 import 'package:twitter_clone/core/utils.dart';
 import 'package:twitter_clone/features/auth/view/login_view.dart';
 import 'package:twitter_clone/features/home/view/home_view.dart';
@@ -8,12 +9,14 @@ import 'package:twitter_clone/features/home/view/home_view.dart';
 final authControllerProvider =
     StateNotifierProvider<AuthController, bool>((ref) {
   final authAPI = ref.watch(authAPIProvider);
-  return AuthController(authAPI);
+  final userAPI = ref.watch(userAPIProvider);
+  return AuthController(authAPI, userAPI);
 });
 
 class AuthController extends StateNotifier<bool> {
   final AuthAPI _authAPI;
-  AuthController(this._authAPI) : super(false);
+  final UserAPI _userAPI;
+  AuthController(this._authAPI, this._userAPI) : super(false);
   // state = isLoading
 
   void signUp({
