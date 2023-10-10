@@ -51,6 +51,14 @@ class _LoginViewState extends ConsumerState<LoginView> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
+                      const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
                       AuthField(
                         controller: emailController,
                         hintText: 'email',
@@ -65,7 +73,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                         alignment: Alignment.topRight,
                         child: RoundSmallButton(
                           onTap: onLogin,
-                          label: 'Done',
+                          label: 'Login',
                         ),
                       ),
                       const SizedBox(height: 40),

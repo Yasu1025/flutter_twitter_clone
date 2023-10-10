@@ -50,6 +50,14 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
+                      const Text(
+                        'Singup',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
                       AuthField(
                         controller: emailController,
                         hintText: 'email',
@@ -64,7 +72,7 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
                         alignment: Alignment.topRight,
                         child: RoundSmallButton(
                           onTap: onSignUp,
-                          label: 'Done',
+                          label: 'sign up',
                         ),
                       ),
                       const SizedBox(height: 40),
