@@ -8,4 +8,11 @@ class AppWriteConstants {
 
   // DB collections
   static final String usersCollection = dotenv.get('APPWRITE_USERS_COLLECTION');
+  static final String tweetsCollection =
+      dotenv.get('APPWRITE_TWEETS_COLLECTION');
+
+  // bucket ID
+  static final String imagesBucketId = dotenv.get('APPWRITE_IMAGES_BUCKET_ID');
+  static String imageUrl(String imageID) =>
+      '${endPoint}/storage/buckets/${imagesBucketId}/files/${imageID}/view?project=${projectId}&mode=admin';
 }

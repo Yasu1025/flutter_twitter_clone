@@ -9,6 +9,7 @@ import 'package:twitter_clone/common/rounded_small_button.dart';
 import 'package:twitter_clone/constants/assets_constants.dart';
 import 'package:twitter_clone/core/utils.dart';
 import 'package:twitter_clone/features/auth/controller/auth_controller.dart';
+import 'package:twitter_clone/features/tweet/controller/tweet_controller.dart';
 import 'package:twitter_clone/theme/theme.dart';
 
 class CreateTweetScreen extends ConsumerStatefulWidget {
@@ -32,6 +33,12 @@ class _CreateTweetScreenState extends ConsumerState<CreateTweetScreen> {
     tweetController.dispose();
   }
 
+  void shareTweet() {
+    final tweetNotifier = ref.read(tweetControllerNotifierProvider.notifier);
+    tweetNotifier.shareTweet(
+        images: images, text: tweetController.text, context: context);
+  }
+
   void onPickImages() async {
     images = await pickImages();
     setState(() {});
@@ -40,10 +47,13 @@ class _CreateTweetScreenState extends ConsumerState<CreateTweetScreen> {
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.read(currentUserDetailsProvider).value;
+    final isLoading = ref.watch(tweetControllerNotifierProvider);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           icon: const Icon(
             Icons.close,
             size: 30,
@@ -51,7 +61,7 @@ class _CreateTweetScreenState extends ConsumerState<CreateTweetScreen> {
         ),
         actions: [
           RoundSmallButton(
-            onTap: () {},
+            onTap: shareTweet,
             label: 'Tweet',
             backgroundColor: Pallete.blueColor,
             textColor: Pallete.whiteColor,

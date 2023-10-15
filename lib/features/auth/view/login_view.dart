@@ -20,8 +20,8 @@ class LoginView extends ConsumerStatefulWidget {
 
 class _LoginViewState extends ConsumerState<LoginView> {
   final appBar = UIConstants.appBar();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final emailController = TextEditingController(text: 'test12345@gmail.com');
+  final passwordController = TextEditingController(text: 'test123456');
 
   @override
   void dispose() {
