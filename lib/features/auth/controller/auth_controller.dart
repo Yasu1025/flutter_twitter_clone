@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:appwrite/models.dart' as model;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone/apis/auth_api.dart';
 import 'package:twitter_clone/apis/user_api.dart';
@@ -14,11 +15,35 @@ final authControllerProvider =
   return AuthController(authAPI, userAPI);
 });
 
+// user details by UID
+final userDetailsProvider = FutureProvider.family((ref, String uid) async {
+  final authController = ref.watch(authControllerProvider.notifier);
+  return authController.getUserData(uid);
+});
+
+// CurrentUser Details
+final currentUserDetailsProvider = FutureProvider((ref) {
+  final currentUser = ref.watch(currentUserAccountProvider).value;
+  print(currentUser);
+  if (currentUser != null) {
+    final currentUserId = currentUser.$id;
+    final userDetails = ref.watch(userDetailsProvider(currentUserId));
+    return userDetails.value;
+  }
+});
+
+final currentUserAccountProvider = FutureProvider((ref) {
+  final authController = ref.watch(authControllerProvider.notifier);
+  return authController.currentUser();
+});
+
 class AuthController extends StateNotifier<bool> {
   final AuthAPI _authAPI;
   final UserAPI _userAPI;
   AuthController(this._authAPI, this._userAPI) : super(false);
   // state = isLoading
+
+  Future<model.User?> currentUser() => _authAPI.currentUserAccount();
 
   void signUp({
     required String email,
@@ -34,7 +59,7 @@ class AuthController extends StateNotifier<bool> {
       ),
       (r) async {
         User user = User(
-          uid: '',
+          uid: r.$id,
           name: getNameFromEmail(email),
           email: email,
           profilePic: '',
@@ -75,5 +100,11 @@ class AuthController extends StateNotifier<bool> {
       },
     );
     state = false;
+  }
+
+  Future<User> getUserData(String uid) async {
+    final document = await _userAPI.getUserData(uid);
+    final updatedUser = User.fromMap(document.data);
+    return updatedUser;
   }
 }
