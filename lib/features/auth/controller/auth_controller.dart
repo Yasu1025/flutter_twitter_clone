@@ -23,13 +23,9 @@ final userDetailsProvider = FutureProvider.family((ref, String uid) async {
 
 // CurrentUser Details
 final currentUserDetailsProvider = FutureProvider((ref) {
-  final currentUser = ref.watch(currentUserAccountProvider).value;
-  print(currentUser);
-  if (currentUser != null) {
-    final currentUserId = currentUser.$id;
-    final userDetails = ref.watch(userDetailsProvider(currentUserId));
-    return userDetails.value;
-  }
+  final currentUserId = ref.watch(currentUserAccountProvider).value!.$id;
+  final userDetails = ref.watch(userDetailsProvider(currentUserId));
+  return userDetails.value;
 });
 
 final currentUserAccountProvider = FutureProvider((ref) {
