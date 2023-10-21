@@ -11,8 +11,8 @@ class User {
   final String profilePic;
   final String banerPic;
   final String bio;
-  final List<dynamic> followers;
-  final List<dynamic> followings;
+  final List<String> followers;
+  final List<String> followings;
   final bool isTwitterBlue;
   const User({
     required this.uid,
@@ -33,8 +33,8 @@ class User {
     String? profilePic,
     String? banerPic,
     String? bio,
-    List<dynamic>? followers,
-    List<dynamic>? followings,
+    List<String>? followers,
+    List<String>? followings,
     bool? isTwitterBlue,
   }) {
     return User(
@@ -72,8 +72,10 @@ class User {
       profilePic: map['profilePic'] as String,
       banerPic: map['banerPic'] as String,
       bio: map['bio'] as String,
-      followers: List<dynamic>.from((map['followers'] as List<dynamic>)),
-      followings: List<dynamic>.from((map['followings'] as List<dynamic>)),
+      followers:
+          List<String>.from((map['followers'].cast<String>() as List<String>)),
+      followings:
+          List<String>.from((map['followings'].cast<String>() as List<String>)),
       isTwitterBlue: map['isTwitterBlue'] as bool,
     );
   }

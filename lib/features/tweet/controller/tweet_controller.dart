@@ -17,6 +17,16 @@ final tweetControllerNotifierProvider =
   return TweetControllerNotifier(ref, tweetAPI, storageAPI);
 });
 
+final getTweetProvider = FutureProvider((ref) {
+  final tweetController = ref.watch(tweetControllerNotifierProvider.notifier);
+  return tweetController.getTweets();
+});
+
+final getLatestTweetProvider = StreamProvider((ref) {
+  final tweetAPI = ref.watch(tweetAPIProvider);
+  return tweetAPI.getLatestTweet();
+});
+
 class TweetControllerNotifier extends StateNotifier<bool> {
   final TweetAPI _tweetAPI;
   final StorageAPi _storageAPI;
@@ -143,5 +153,10 @@ class TweetControllerNotifier extends StateNotifier<bool> {
         context: context,
       );
     }
+  }
+
+  Future<List<Tweet>> getTweets() async {
+    final tweetList = await _tweetAPI.getTweets();
+    return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
   }
 }

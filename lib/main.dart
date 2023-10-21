@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:twitter_clone/common/error_page.dart';
 import 'package:twitter_clone/features/auth/controller/auth_controller.dart';
 import 'package:twitter_clone/features/auth/view/signup_view.dart';
 import 'package:twitter_clone/features/home/view/home_view.dart';
@@ -30,11 +31,9 @@ class MyApp extends ConsumerWidget {
               }
               return const SignUpView();
             },
-            error: (error, st) {
-              // TODO error page
-              print(error.toString());
-              return Text(error.toString());
-            },
+            error: (error, st) => ErrorPage(
+              error: error.toString(),
+            ),
             // TODO Loading page
             loading: () => const Text('Loading....'),
           ),

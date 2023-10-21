@@ -19,8 +19,8 @@ class SignUpView extends ConsumerStatefulWidget {
 
 class _SignUpViewState extends ConsumerState<SignUpView> {
   final appBar = UIConstants.appBar();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final emailController = TextEditingController(text: 'test12345@gmail.com');
+  final passwordController = TextEditingController(text: 'test123456');
 
   @override
   void dispose() {

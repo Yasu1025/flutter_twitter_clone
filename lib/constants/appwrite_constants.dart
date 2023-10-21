@@ -13,6 +13,13 @@ class AppWriteConstants {
 
   // bucket ID
   static final String imagesBucketId = dotenv.get('APPWRITE_IMAGES_BUCKET_ID');
+  static String tweetColletionPath =
+      'databases.${AppWriteConstants.databaseId}.collections.${AppWriteConstants.tweetsCollection}.documents';
+  static String tweetColletionCreatePath =
+      'databases.*.collections.${AppWriteConstants.tweetsCollection}.documents.*.create';
+  static String tweetColletionUpdatePath =
+      'databases.*.collections.${AppWriteConstants.tweetsCollection}.documents.*.update';
+
   static String imageUrl(String imageID) =>
       '${endPoint}/storage/buckets/${imagesBucketId}/files/${imageID}/view?project=${projectId}&mode=admin';
 }

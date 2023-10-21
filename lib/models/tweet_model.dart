@@ -78,14 +78,17 @@ class Tweet {
     return Tweet(
       id: map['\$id'] as String,
       text: map['text'] as String,
-      hashtags: List<String>.from((map['hashtags'] as List<String>)),
+      hashtags:
+          List<String>.from((map['hashtags'].cast<String>() as List<String>)),
       link: map['link'] as String,
-      imageLinks: List<String>.from((map['imageLinks'] as List<String>)),
+      imageLinks:
+          List<String>.from((map['imageLinks'].cast<String>() as List<String>)),
       uid: map['uid'] as String,
       tweetType: (map['tweetType'] as String).toTweetTypeEnum(),
       tweetedAt: DateTime.fromMillisecondsSinceEpoch(map['tweetedAt'] as int),
-      likes: List<String>.from((map['likes'] as List<String>)),
-      commentIds: List<String>.from((map['commentIds'] as List<String>)),
+      likes: List<String>.from((map['likes'].cast<String>() as List<String>)),
+      commentIds:
+          List<String>.from((map['commentIds'].cast<String>() as List<String>)),
       reshareCount: map['reshareCount'] as int,
     );
   }
