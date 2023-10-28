@@ -18,57 +18,60 @@ class TweetCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(userDetailsProvider(tweet.uid)).when(
-          data: (userInfo) {
-            return Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    final currentUser = ref.watch(currentUserAccountProvider).value;
+
+    return currentUser == null
+        ? const SizedBox()
+        : ref.watch(userDetailsProvider(tweet.uid)).when(
+              data: (userInfo) {
+                return Column(
                   children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        userInfo.profilePic,
-                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            userInfo.profilePic,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //retweeted
+                              TweetUserArea(
+                                name: userInfo.name,
+                                tweetedAt: tweet.tweetedAt,
+                              ),
+                              const SizedBox(height: 10),
+                              // Replied to
+                              HashtagText(text: tweet.text),
+                              if (tweet.tweetType == TweetType.image)
+                                CarouselImages(imageLinks: tweet.imageLinks),
+                              if (tweet.link.isNotEmpty) ...[
+                                AnyLinkPreview(
+                                  link: 'https://${tweet.link}',
+                                ),
+                              ],
+                              TweetActionButtons(
+                                tweet: tweet,
+                                user: userInfo,
+                              ),
+                              const SizedBox(height: 1),
+                            ],
+                          ),
+                        )
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //retweeted
-                          TweetUserArea(
-                            name: userInfo.name,
-                            tweetedAt: tweet.tweetedAt,
-                          ),
-                          const SizedBox(height: 10),
-                          // Replied to
-                          HashtagText(text: tweet.text),
-                          if (tweet.tweetType == TweetType.image)
-                            CarouselImages(imageLinks: tweet.imageLinks),
-                          if (tweet.link.isNotEmpty) ...[
-                            AnyLinkPreview(
-                              link: 'https://${tweet.link}',
-                            ),
-                          ],
-                          TweetActionButtons(
-                            commentIds: tweet.commentIds,
-                            reshareCount: tweet.reshareCount,
-                            likes: tweet.likes,
-                          ),
-                          const SizedBox(height: 1),
-                        ],
-                      ),
-                    )
+                    const Divider(color: Pallete.greyColor),
                   ],
-                ),
-                const Divider(color: Pallete.greyColor),
-              ],
+                );
+              },
+              error: (error, st) => ErrorText(
+                error: error.toString(),
+              ),
+              loading: () => const Loader(),
             );
-          },
-          error: (error, st) => ErrorText(
-            error: error.toString(),
-          ),
-          loading: () => const Loader(),
-        );
   }
 }

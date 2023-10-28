@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:like_button/like_button.dart';
 import 'package:twitter_clone/constants/assets_constants.dart';
+import 'package:twitter_clone/features/tweet/controller/tweet_controller.dart';
 import 'package:twitter_clone/features/tweet/widget/card/tweet_icon_button.dart';
+import 'package:twitter_clone/models/tweet_model.dart';
+import 'package:twitter_clone/models/user_model.dart';
 import 'package:twitter_clone/theme/pallete.dart';
 
-class TweetActionButtons extends StatelessWidget {
-  final List<String> commentIds;
-  final int reshareCount;
-  final List<String> likes;
+class TweetActionButtons extends ConsumerWidget {
+  final Tweet tweet;
+  final User user;
+
   const TweetActionButtons({
     super.key,
-    required this.commentIds,
-    required this.reshareCount,
-    required this.likes,
+    required this.tweet,
+    required this.user,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       margin: const EdgeInsets.only(top: 10, right: 29),
       child: Row(
@@ -25,21 +28,31 @@ class TweetActionButtons extends StatelessWidget {
         children: [
           TweetIconButton(
             pathName: AssetsConstants.viewsIcon,
-            text: (commentIds.length + reshareCount + likes.length).toString(),
+            text: (tweet.commentIds.length +
+                    tweet.reshareCount +
+                    tweet.likes.length)
+                .toString(),
             onTap: () {},
           ),
           TweetIconButton(
             pathName: AssetsConstants.commentIcon,
-            text: (commentIds.length).toString(),
+            text: (tweet.commentIds.length).toString(),
             onTap: () {},
           ),
           TweetIconButton(
             pathName: AssetsConstants.retweetIcon,
-            text: (reshareCount).toString(),
+            text: (tweet.reshareCount).toString(),
             onTap: () {},
           ),
           LikeButton(
+            onTap: (isLiked) async {
+              ref
+                  .read(tweetControllerNotifierProvider.notifier)
+                  .likeTweet(tweet, user);
+              return !isLiked;
+            },
             size: 25,
+            isLiked: tweet.likes.contains(user.uid),
             likeBuilder: (isLiked) {
               return isLiked
                   ? SvgPicture.asset(
@@ -51,7 +64,7 @@ class TweetActionButtons extends StatelessWidget {
                       color: Pallete.greyColor,
                     );
             },
-            likeCount: likes.length,
+            likeCount: tweet.likes.length,
             countBuilder: (likeCount, isLiked, text) {
               return Padding(
                 padding: const EdgeInsets.only(left: 2.0),

@@ -9,6 +9,7 @@ import 'package:twitter_clone/core/utils.dart';
 import 'package:twitter_clone/features/auth/controller/auth_controller.dart';
 import 'package:twitter_clone/features/home/view/home_view.dart';
 import 'package:twitter_clone/models/tweet_model.dart';
+import 'package:twitter_clone/models/user_model.dart';
 
 final tweetControllerNotifierProvider =
     StateNotifierProvider<TweetControllerNotifier, bool>((ref) {
@@ -129,6 +130,11 @@ class TweetControllerNotifier extends StateNotifier<bool> {
   }
 
 // ----------------
+  Future<List<Tweet>> getTweets() async {
+    final tweetList = await _tweetAPI.getTweets();
+    return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
+  }
+
   void shareTweet({
     required List<File> images,
     required String text,
@@ -155,8 +161,21 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     }
   }
 
-  Future<List<Tweet>> getTweets() async {
-    final tweetList = await _tweetAPI.getTweets();
-    return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
+  void likeTweet(Tweet tweet, User user) async {
+    List<String> likes = tweet.likes;
+
+    if (likes.contains(user.uid)) {
+      likes.remove(user.uid);
+    } else {
+      likes.add(user.uid);
+    }
+
+    tweet = tweet.copyWith(likes: likes);
+
+    final res = await _tweetAPI.likeTweet(tweet);
+    res.fold(
+      (l) => null,
+      (r) => null,
+    );
   }
 }
