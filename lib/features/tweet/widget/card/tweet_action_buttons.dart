@@ -42,7 +42,11 @@ class TweetActionButtons extends ConsumerWidget {
           TweetIconButton(
             pathName: AssetsConstants.retweetIcon,
             text: (tweet.reshareCount).toString(),
-            onTap: () {},
+            onTap: () {
+              ref
+                  .read(tweetControllerNotifierProvider.notifier)
+                  .reshareTweet(tweet, user, context);
+            },
           ),
           LikeButton(
             onTap: (isLiked) async {
