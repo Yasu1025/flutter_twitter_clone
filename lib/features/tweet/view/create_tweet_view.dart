@@ -36,7 +36,11 @@ class _CreateTweetScreenState extends ConsumerState<CreateTweetScreen> {
   void shareTweet() {
     final tweetNotifier = ref.read(tweetControllerNotifierProvider.notifier);
     tweetNotifier.shareTweet(
-        images: images, text: tweetController.text, context: context);
+      images: images,
+      text: tweetController.text,
+      context: context,
+      repliedTo: '',
+    );
   }
 
   void onPickImages() async {

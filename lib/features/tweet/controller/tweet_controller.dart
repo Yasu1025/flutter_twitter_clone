@@ -24,6 +24,16 @@ final getTweetProvider = FutureProvider((ref) {
   return tweetController.getTweets();
 });
 
+final getRepliedTweetProvider = FutureProvider.family((ref, Tweet tweet) {
+  final tweetController = ref.watch(tweetControllerNotifierProvider.notifier);
+  return tweetController.getRepliedToTweet(tweet);
+});
+
+final getTweetByIdProvider = FutureProvider.family((ref, String id) async {
+  final tweetController = ref.watch(tweetControllerNotifierProvider.notifier);
+  return tweetController.getTweetById(id);
+});
+
 final getLatestTweetProvider = StreamProvider((ref) {
   final tweetAPI = ref.watch(tweetAPIProvider);
   return tweetAPI.getLatestTweet();
@@ -42,6 +52,7 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     required List<File> images,
     required String text,
     required BuildContext context,
+    required String repliedTo,
   }) async {
     state = true;
     final hashtags = _getHashtagsFromText(text);
@@ -61,6 +72,7 @@ class TweetControllerNotifier extends StateNotifier<bool> {
       commentIds: const [],
       reshareCount: 0,
       resharedBy: '',
+      repliedTo: repliedTo,
     );
 
     final res = await _tweetAPI.shareTweet(tweet);
@@ -76,6 +88,7 @@ class TweetControllerNotifier extends StateNotifier<bool> {
   void _shareTextTweet({
     required String text,
     required BuildContext context,
+    required String repliedTo,
   }) async {
     state = true;
     final hashtags = _getHashtagsFromText(text);
@@ -83,18 +96,20 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     final user = _ref.read(currentUserDetailsProvider).value!;
     print(DateTime.now());
     Tweet tweet = Tweet(
-        id: '',
-        text: text,
-        hashtags: hashtags,
-        link: link,
-        imageLinks: const [],
-        uid: user.uid,
-        tweetType: TweetType.text,
-        tweetedAt: DateTime.now(),
-        likes: const [],
-        commentIds: const [],
-        reshareCount: 0,
-        resharedBy: '');
+      id: '',
+      text: text,
+      hashtags: hashtags,
+      link: link,
+      imageLinks: const [],
+      uid: user.uid,
+      tweetType: TweetType.text,
+      tweetedAt: DateTime.now(),
+      likes: const [],
+      commentIds: const [],
+      reshareCount: 0,
+      resharedBy: '',
+      repliedTo: repliedTo,
+    );
 
     final res = await _tweetAPI.shareTweet(tweet);
     state = false;
@@ -130,16 +145,26 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     return hashtags;
   }
 
-// ----------------
   Future<List<Tweet>> getTweets() async {
     final tweetList = await _tweetAPI.getTweets();
     return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
+  }
+
+  Future<List<Tweet>> getRepliedToTweet(Tweet tweet) async {
+    final tweetList = await _tweetAPI.getRepliedToTweet(tweet);
+    return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
+  }
+
+  Future<Tweet> getTweetById(String id) async {
+    final tweet = await _tweetAPI.getTweetById(id);
+    return Tweet.fromMap(tweet.data);
   }
 
   void shareTweet({
     required List<File> images,
     required String text,
     required BuildContext context,
+    required String repliedTo,
   }) {
     if (text.isEmpty) {
       showSnackBar(context, 'Please Enter Text.....');
@@ -149,16 +174,10 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     if (images.isNotEmpty) {
       // tweet with images
       _shareImageTweet(
-        images: images,
-        text: text,
-        context: context,
-      );
+          images: images, text: text, context: context, repliedTo: repliedTo);
     } else {
       // tweet just text
-      _shareTextTweet(
-        text: text,
-        context: context,
-      );
+      _shareTextTweet(text: text, context: context, repliedTo: repliedTo);
     }
   }
 
@@ -199,6 +218,7 @@ class TweetControllerNotifier extends StateNotifier<bool> {
         tweet = tweet.copyWith(
           id: ID.unique(),
           reshareCount: 0,
+          tweetedAt: DateTime.now(),
         );
         final res2 = await _tweetAPI.shareTweet(tweet);
         res2.fold(
