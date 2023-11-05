@@ -5,6 +5,7 @@ import 'package:twitter_clone/common/loading_page.dart';
 import 'package:twitter_clone/features/auth/controller/auth_controller.dart';
 import 'package:twitter_clone/features/tweet/widget/card/tweet_card.dart';
 import 'package:twitter_clone/features/user_profile/controller/user_profile_controller.dart';
+import 'package:twitter_clone/features/user_profile/view/edit_user_profile_view.dart';
 import 'package:twitter_clone/features/user_profile/widgets/follow_count.dart';
 import 'package:twitter_clone/models/user_model.dart';
 import 'package:twitter_clone/theme/pallete.dart';
@@ -32,7 +33,10 @@ class UserProfile extends ConsumerWidget {
                             ? Container(
                                 color: Pallete.blueColor,
                               )
-                            : Image.network(user.banerPic),
+                            : Image.network(
+                                user.banerPic,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                       Positioned(
                         bottom: 10,
@@ -46,7 +50,17 @@ class UserProfile extends ConsumerWidget {
                         alignment: Alignment.bottomRight,
                         margin: const EdgeInsets.all(20),
                         child: OutlinedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            if (currentUser.uid == user.uid) {
+                              // Edit Profile
+                              Navigator.push(
+                                context,
+                                EditUserProfileView.route(),
+                              );
+                            } else {
+                              // TODO Follow or Unfollow
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
