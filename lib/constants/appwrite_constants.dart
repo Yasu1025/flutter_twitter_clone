@@ -21,6 +21,10 @@ class AppWriteConstants {
       'databases.*.collections.${AppWriteConstants.tweetsCollection}.documents.*.create';
   static String tweetColletionUpdatePath =
       'databases.*.collections.${AppWriteConstants.tweetsCollection}.documents.*.update';
+  static String notificationColletionPath =
+      'databases.${AppWriteConstants.databaseId}.collections.${AppWriteConstants.notificationCollection}.documents';
+  static String notificationColletionCreatePath =
+      'databases.*.collections.${AppWriteConstants.notificationCollection}.documents.*.create';
 
   static String userCollectionPath =
       'databases.${AppWriteConstants.databaseId}.collections.${AppWriteConstants.usersCollection}.documents';

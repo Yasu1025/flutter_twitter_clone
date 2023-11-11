@@ -40,6 +40,7 @@ class _CreateTweetScreenState extends ConsumerState<CreateTweetScreen> {
       text: tweetController.text,
       context: context,
       repliedTo: '',
+      repliedToUserId: '',
     );
   }
 

@@ -1,9 +1,8 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:twitter_clone/constants/assets_constants.dart';
 import 'package:twitter_clone/features/explore/view/explore_view.dart';
+import 'package:twitter_clone/features/notifications/view/notification_view.dart';
 import 'package:twitter_clone/features/tweet/widget/tweet_list.dart';
 import 'package:twitter_clone/theme/theme.dart';
 
@@ -20,10 +19,9 @@ class UIConstants {
     );
   }
 
-// TODO: create views
   static List<Widget> bottomTabBarPages = [
     const TweetList(),
     const ExploreView(),
-    const Text('Notifications screen'),
+    const NotificationView(),
   ];
 }

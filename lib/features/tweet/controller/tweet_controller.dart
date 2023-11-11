@@ -64,6 +64,7 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     required String text,
     required BuildContext context,
     required String repliedTo,
+    required String repliedToUserId,
   }) async {
     state = true;
     final hashtags = _getHashtagsFromText(text);
@@ -91,6 +92,14 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     res.fold(
       (l) => showSnackBar(context, l.message),
       (r) {
+        if (repliedToUserId.isNotEmpty) {
+          _notificationCtrl.createNotification(
+            text: '${user.name} Replied to your tweet!!',
+            postId: r.$id,
+            notificationType: NotificationType.reply,
+            uid: repliedToUserId,
+          );
+        }
         Navigator.push(context, HomeView.route());
       },
     );
@@ -100,6 +109,7 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     required String text,
     required BuildContext context,
     required String repliedTo,
+    required String repliedToUserId,
   }) async {
     state = true;
     final hashtags = _getHashtagsFromText(text);
@@ -127,6 +137,14 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     res.fold(
       (l) => showSnackBar(context, l.message),
       (r) {
+        if (repliedToUserId.isNotEmpty) {
+          _notificationCtrl.createNotification(
+            text: '${user.name} Replied to your tweet!!',
+            postId: r.$id,
+            notificationType: NotificationType.reply,
+            uid: repliedToUserId,
+          );
+        }
         Navigator.push(context, HomeView.route());
       },
     );
@@ -176,6 +194,7 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     required String text,
     required BuildContext context,
     required String repliedTo,
+    required String repliedToUserId,
   }) {
     if (text.isEmpty) {
       showSnackBar(context, 'Please Enter Text.....');
@@ -185,10 +204,20 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     if (images.isNotEmpty) {
       // tweet with images
       _shareImageTweet(
-          images: images, text: text, context: context, repliedTo: repliedTo);
+        images: images,
+        text: text,
+        context: context,
+        repliedTo: repliedTo,
+        repliedToUserId: repliedToUserId,
+      );
     } else {
       // tweet just text
-      _shareTextTweet(text: text, context: context, repliedTo: repliedTo);
+      _shareTextTweet(
+        text: text,
+        context: context,
+        repliedTo: repliedTo,
+        repliedToUserId: repliedToUserId,
+      );
     }
   }
 
@@ -244,7 +273,15 @@ class TweetControllerNotifier extends StateNotifier<bool> {
         final res2 = await _tweetAPI.shareTweet(tweet);
         res2.fold(
           (l) => showSnackBar(context, l.message),
-          (r) => showSnackBar(context, 'Retweeted!!'),
+          (r) {
+            _notificationCtrl.createNotification(
+              text: '${currentUser.name} retweeted your tweet!!',
+              postId: tweet.id,
+              notificationType: NotificationType.retweet,
+              uid: tweet.uid,
+            );
+            showSnackBar(context, 'Retweeted!!');
+          },
         );
       },
     );

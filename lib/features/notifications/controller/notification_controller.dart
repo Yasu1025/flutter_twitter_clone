@@ -9,6 +9,16 @@ final notificationControllerProvider =
   return NotificationController(notificationAPI);
 });
 
+final getLatestNotificationProvider = StreamProvider((ref) {
+  final notificationAPI = ref.watch(notificationAPIProvider);
+  return notificationAPI.getLatestNotification();
+});
+
+final getNotificationsProvider = FutureProvider.family((ref, String uid) async {
+  final notificationCtrl = ref.watch(notificationControllerProvider.notifier);
+  return notificationCtrl.getNotifications(uid);
+});
+
 class NotificationController extends StateNotifier<bool> {
   final NotificationAPI _notificationAPI;
   NotificationController(this._notificationAPI) : super(false);
@@ -28,5 +38,12 @@ class NotificationController extends StateNotifier<bool> {
     );
 
     await _notificationAPI.createNotification(notification);
+  }
+
+  Future<List<NotificationModel>> getNotifications(String uid) async {
+    final notificationList = await _notificationAPI.getNotifications(uid);
+    return notificationList
+        .map((notification) => NotificationModel.fromMap(notification.data))
+        .toList();
   }
 }
