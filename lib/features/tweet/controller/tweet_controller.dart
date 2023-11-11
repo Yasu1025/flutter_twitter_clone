@@ -194,11 +194,12 @@ class TweetControllerNotifier extends StateNotifier<bool> {
 
   void likeTweet(Tweet tweet, User user) async {
     List<String> likes = tweet.likes;
-
+    bool isToLike = false;
     if (likes.contains(user.uid)) {
       likes.remove(user.uid);
     } else {
       likes.add(user.uid);
+      isToLike = true;
     }
 
     tweet = tweet.copyWith(likes: likes);
@@ -207,12 +208,14 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     res.fold(
       (l) => null,
       (r) {
-        _notificationCtrl.createNotification(
-          text: '${user.name} liked your tweet!!',
-          postId: tweet.id,
-          notificationType: NotificationType.like,
-          uid: tweet.uid,
-        );
+        if (isToLike) {
+          _notificationCtrl.createNotification(
+            text: '${user.name} liked your tweet!!',
+            postId: tweet.id,
+            notificationType: NotificationType.like,
+            uid: tweet.uid,
+          );
+        }
       },
     );
   }

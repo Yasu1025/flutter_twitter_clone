@@ -23,7 +23,7 @@ class TweetCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(currentUserAccountProvider).value;
+    final currentUser = ref.watch(currentUserDetailsProvider).value;
 
     return currentUser == null
         ? const SizedBox()
@@ -123,7 +123,7 @@ class TweetCard extends ConsumerWidget {
                                 ],
                                 TweetActionButtons(
                                   tweet: tweet,
-                                  user: userInfo,
+                                  user: currentUser,
                                 ),
                                 const SizedBox(height: 1),
                               ],
