@@ -3,20 +3,29 @@ import 'dart:io';
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:twitter_clone/apis/notification_api.dart';
 import 'package:twitter_clone/apis/storage_api.dart';
 import 'package:twitter_clone/apis/tweet_api.dart';
+import 'package:twitter_clone/core/enums/notification_type_enum.dart';
 import 'package:twitter_clone/core/enums/tweet_type_enum.dart';
 import 'package:twitter_clone/core/utils.dart';
 import 'package:twitter_clone/features/auth/controller/auth_controller.dart';
 import 'package:twitter_clone/features/home/view/home_view.dart';
+import 'package:twitter_clone/features/notifications/controller/notification_controller.dart';
 import 'package:twitter_clone/models/tweet_model.dart';
 import 'package:twitter_clone/models/user_model.dart';
 
 final tweetControllerNotifierProvider =
     StateNotifierProvider<TweetControllerNotifier, bool>((ref) {
   final tweetAPI = ref.watch(tweetAPIProvider);
+  final notificationCtrl = ref.watch(notificationControllerProvider.notifier);
   final storageAPI = ref.watch(storageAPIProvider);
-  return TweetControllerNotifier(ref, tweetAPI, storageAPI);
+  return TweetControllerNotifier(
+    ref,
+    tweetAPI,
+    notificationCtrl,
+    storageAPI,
+  );
 });
 
 final getTweetProvider = FutureProvider((ref) {
@@ -41,9 +50,11 @@ final getLatestTweetProvider = StreamProvider((ref) {
 
 class TweetControllerNotifier extends StateNotifier<bool> {
   final TweetAPI _tweetAPI;
+  final NotificationController _notificationCtrl;
   final StorageAPi _storageAPI;
   final Ref _ref;
-  TweetControllerNotifier(this._ref, this._tweetAPI, this._storageAPI)
+  TweetControllerNotifier(
+      this._ref, this._tweetAPI, this._notificationCtrl, this._storageAPI)
       : super(false);
   // state is isLoading
 
@@ -195,7 +206,14 @@ class TweetControllerNotifier extends StateNotifier<bool> {
     final res = await _tweetAPI.likeTweet(tweet);
     res.fold(
       (l) => null,
-      (r) => null,
+      (r) {
+        _notificationCtrl.createNotification(
+          text: '${user.name} liked your tweet!!',
+          postId: tweet.id,
+          notificationType: NotificationType.like,
+          uid: tweet.uid,
+        );
+      },
     );
   }
 

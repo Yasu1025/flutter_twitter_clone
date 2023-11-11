@@ -10,7 +10,8 @@ import 'package:twitter_clone/models/user_model.dart';
 
 final userAPIProvider = Provider((ref) {
   final db = ref.watch(appwriteDBProvider);
-  return UserAPI(db: db);
+  final realtime = ref.watch(appwriteRealtimeProvider);
+  return UserAPI(db: db, realtime: realtime);
 });
 
 abstract class IUserAPI {
@@ -18,12 +19,18 @@ abstract class IUserAPI {
   Future<model.Document> getUserData(String uid);
   Future<List<model.Document>> searchUserByName(String name);
   FutureEitherVoid updateUserData(User user);
+  Stream<RealtimeMessage> getLatestUserProfileData();
+  FutureEitherVoid followUser(User user);
+  FutureEitherVoid addToFolloing(User user);
 }
 
 class UserAPI implements IUserAPI {
   final Databases _db;
+  final Realtime _realtime;
 
-  UserAPI({required Databases db}) : _db = db;
+  UserAPI({required Databases db, required Realtime realtime})
+      : _db = db,
+        _realtime = realtime;
 
   @override
   FutureEitherVoid saveUserData(User user) async {
@@ -81,6 +88,57 @@ class UserAPI implements IUserAPI {
 
       // ignore: avoid_print
       print('Update User Successfully $doc');
+      return right(null);
+    } on AppwriteException catch (e, st) {
+      return left(
+        Failuer(e.message ?? 'Some unexpected error occured...', st),
+      );
+    } catch (e, st) {
+      return left(
+        Failuer(e.toString(), st),
+      );
+    }
+  }
+
+  @override
+  Stream<RealtimeMessage> getLatestUserProfileData() {
+    return _realtime.subscribe([
+      AppWriteConstants.userCollectionPath,
+    ]).stream;
+  }
+
+  @override
+  FutureEitherVoid followUser(User user) async {
+    try {
+      final doc = await _db.updateDocument(
+        databaseId: AppWriteConstants.databaseId,
+        collectionId: AppWriteConstants.usersCollection,
+        documentId: user.uid,
+        data: {'followers': user.followers},
+      );
+
+      return right(null);
+    } on AppwriteException catch (e, st) {
+      return left(
+        Failuer(e.message ?? 'Some unexpected error occured...', st),
+      );
+    } catch (e, st) {
+      return left(
+        Failuer(e.toString(), st),
+      );
+    }
+  }
+
+  @override
+  FutureEitherVoid addToFolloing(User user) async {
+    try {
+      final doc = await _db.updateDocument(
+        databaseId: AppWriteConstants.databaseId,
+        collectionId: AppWriteConstants.usersCollection,
+        documentId: user.uid,
+        data: {'followings': user.followings},
+      );
+
       return right(null);
     } on AppwriteException catch (e, st) {
       return left(

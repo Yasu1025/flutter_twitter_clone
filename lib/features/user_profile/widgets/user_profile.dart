@@ -59,6 +59,13 @@ class UserProfile extends ConsumerWidget {
                               );
                             } else {
                               // TODO Follow or Unfollow
+                              ref
+                                  .read(userProfileControllerProvider.notifier)
+                                  .followUser(
+                                    user: user,
+                                    context: context,
+                                    currentUser: currentUser,
+                                  );
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -74,7 +81,9 @@ class UserProfile extends ConsumerWidget {
                           child: Text(
                             currentUser.uid == user.uid
                                 ? 'Edit Profile'
-                                : 'Follow',
+                                : currentUser.followings.contains(user.uid)
+                                    ? 'Following'
+                                    : 'Follow',
                             style: const TextStyle(
                               color: Pallete.whiteColor,
                             ),

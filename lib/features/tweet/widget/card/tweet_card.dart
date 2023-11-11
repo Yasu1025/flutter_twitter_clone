@@ -13,6 +13,7 @@ import 'package:twitter_clone/features/tweet/widget/card/carousel_images.dart';
 import 'package:twitter_clone/features/tweet/widget/card/hashtag_text.dart';
 import 'package:twitter_clone/features/tweet/widget/card/tweet_action_buttons.dart';
 import 'package:twitter_clone/features/tweet/widget/card/tweet_user_area.dart';
+import 'package:twitter_clone/features/user_profile/view/user_profile_view.dart';
 import 'package:twitter_clone/models/tweet_model.dart';
 import 'package:twitter_clone/theme/pallete.dart';
 
@@ -37,9 +38,17 @@ class TweetCard extends ConsumerWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              userInfo.profilePic,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                UserProfileView.route(userInfo),
+                              );
+                            },
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                userInfo.profilePic,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 10),
